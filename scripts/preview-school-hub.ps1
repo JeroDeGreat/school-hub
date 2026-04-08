@@ -1,5 +1,7 @@
 param(
-  [int]$Port = 3000
+  [int]$Port = 3000,
+  [ValidateSet("external", "none")]
+  [string]$OpenMode = "external"
 )
 
 $ErrorActionPreference = "Stop"
@@ -81,8 +83,11 @@ if (-not (Test-PreviewReady -Url $previewUrl)) {
 }
 
 Write-Host ""
-Write-Host "Opening School Hub phone preview..."
+Write-Host "School Hub preview is ready."
 Write-Host "Preview: $previewUrl"
 Write-Host "Demo:    $demoUrl"
 
-Start-Process $previewUrl | Out-Null
+if ($OpenMode -eq "external") {
+  Write-Host "Opening School Hub phone preview..."
+  Start-Process $previewUrl | Out-Null
+}

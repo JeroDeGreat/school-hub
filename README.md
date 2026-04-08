@@ -91,6 +91,8 @@ On Windows, you can now launch the app with one click:
 If you are inside VS Code, you can also run the `Preview School Hub` task from:
 
 - `Terminal` -> `Run Task...` -> `Preview School Hub`
+- `Terminal` -> `Run Task...` -> `Preview School Hub In Editor` to open the phone preview inside a VS Code browser tab
+- `Terminal` -> `Run Task...` -> `Open School Hub Demo In Editor` to open the interactive demo inside a VS Code browser tab
 
 You can also use VS Code `Run and Debug`:
 
@@ -100,6 +102,13 @@ You can also use VS Code `Run and Debug`:
 4. Press `F5`
 
 That will start the preview flow and open the phone-style view for you automatically.
+
+If you want the preview inside VS Code instead of your normal browser:
+
+1. Open `Terminal` -> `Run Task...`
+2. Choose `Preview School Hub In Editor`
+
+That uses VS Code's built-in browser tab and opens `http://127.0.0.1:3000/preview` inside the editor.
 
 ## Verification
 

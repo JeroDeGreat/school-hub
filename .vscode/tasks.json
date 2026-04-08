@@ -11,6 +11,74 @@
         "panel": "shared",
         "focus": true
       }
+    },
+    {
+      "label": "Start School Hub Preview Server",
+      "type": "shell",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}\\scripts\\preview-school-hub.ps1",
+        "-OpenMode",
+        "none"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "focus": true
+      }
+    },
+    {
+      "label": "Preview School Hub In Editor",
+      "type": "shell",
+      "command": "echo ${input:openSchoolHubPhonePreviewInEditor}",
+      "dependsOn": [
+        "Start School Hub Preview Server"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never",
+        "echo": false,
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Open School Hub Demo In Editor",
+      "type": "shell",
+      "command": "echo ${input:openSchoolHubDemoInEditor}",
+      "dependsOn": [
+        "Start School Hub Preview Server"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never",
+        "echo": false,
+        "focus": false,
+        "panel": "shared"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "openSchoolHubPhonePreviewInEditor",
+      "type": "command",
+      "command": "simpleBrowser.api.open",
+      "args": [
+        "http://127.0.0.1:3000/preview"
+      ]
+    },
+    {
+      "id": "openSchoolHubDemoInEditor",
+      "type": "command",
+      "command": "simpleBrowser.api.open",
+      "args": [
+        "http://127.0.0.1:3000/demo"
+      ]
     }
   ]
 }
