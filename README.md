@@ -78,6 +78,20 @@ npm run dev
 - [http://localhost:3000/demo](http://localhost:3000/demo) for a local interactive demo workspace
 - [http://localhost:3000/preview](http://localhost:3000/preview) for phone-sized preview frames in the browser
 
+## One-Click Preview
+
+On Windows, you can now launch the app with one click:
+
+1. Double-click [preview-school-hub.cmd](./preview-school-hub.cmd)
+2. It will:
+   - install dependencies if needed
+   - start the local preview server
+   - open the phone-style preview page automatically
+
+If you are inside VS Code, you can also run the `Preview School Hub` task from:
+
+- `Terminal` -> `Run Task...` -> `Preview School Hub`
+
 ## Verification
 
 The project has been validated with:
