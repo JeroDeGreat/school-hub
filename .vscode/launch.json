@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "School Hub Phone Preview",
+      "type": "pwa-msedge",
+      "request": "launch",
+      "url": "http://127.0.0.1:3000/preview",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "Preview School Hub"
+    },
+    {
+      "name": "School Hub Demo Workspace",
+      "type": "pwa-msedge",
+      "request": "launch",
+      "url": "http://127.0.0.1:3000/demo",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "Preview School Hub"
+    },
+    {
+      "name": "School Hub App Shell",
+      "type": "pwa-msedge",
+      "request": "launch",
+      "url": "http://127.0.0.1:3000",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "Preview School Hub"
+    }
+  ]
+}

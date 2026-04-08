@@ -92,6 +92,15 @@ If you are inside VS Code, you can also run the `Preview School Hub` task from:
 
 - `Terminal` -> `Run Task...` -> `Preview School Hub`
 
+You can also use VS Code `Run and Debug`:
+
+1. Open the repo folder in VS Code
+2. Go to `Run and Debug`
+3. Choose `School Hub Phone Preview`
+4. Press `F5`
+
+That will start the preview flow and open the phone-style view for you automatically.
+
 ## Verification
 
 The project has been validated with:
