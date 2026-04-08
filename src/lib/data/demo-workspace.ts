@@ -1,4 +1,5 @@
-import type { WorkspaceData } from "@/lib/types/app";
+import type { UserSummary, WorkspaceData } from "@/lib/types/app";
+import type { MembershipRole } from "@/lib/types/database";
 
 const now = Date.now();
 
@@ -10,50 +11,79 @@ function isoHoursFromNow(hours: number) {
   return new Date(now + hours * 60 * 60 * 1000).toISOString();
 }
 
-export function getDemoWorkspaceData(): WorkspaceData {
-  const teacher = {
+function uniqueUsers(users: UserSummary[]) {
+  return users.filter(
+    (user, index, collection) =>
+      collection.findIndex((candidate) => candidate.id === user.id) === index,
+  );
+}
+
+export function getDemoWorkspaceData(
+  role: "student" | "teacher" | "admin" = "teacher",
+): WorkspaceData {
+  const teacher: UserSummary = {
     id: "user-anna",
     fullName: "Anna Mercer",
     handle: "annamercer",
     email: "anna.mercer@schoolhub.edu",
     avatarUrl: null,
-    role: "teacher" as const,
+    role: "teacher",
     headline: "Design lead and advisory teacher",
     points: 128,
   };
 
-  const studentOne = {
+  const admin: UserSummary = {
+    id: "user-admin",
+    fullName: "School Hub Admin",
+    handle: "schoolhubadmin",
+    email: "admin@schoolhub.local",
+    avatarUrl: null,
+    role: "admin",
+    headline: "System admin and rollout lead",
+    points: 320,
+  };
+
+  const studentOne: UserSummary = {
     id: "user-jai",
     fullName: "Jai Raman",
     handle: "jai",
     email: "jai.raman@schoolhub.edu",
     avatarUrl: null,
-    role: "student" as const,
+    role: "student",
     headline: "Visual storytelling club",
     points: 82,
   };
 
-  const studentTwo = {
+  const studentTwo: UserSummary = {
     id: "user-mila",
     fullName: "Mila Hart",
     handle: "mila",
     email: "mila.hart@schoolhub.edu",
     avatarUrl: null,
-    role: "student" as const,
+    role: "student",
     headline: "Science guild volunteer",
     points: 91,
   };
 
-  const studentThree = {
+  const studentThree: UserSummary = {
     id: "user-omar",
     fullName: "Omar Lewis",
     handle: "omar",
     email: "omar.lewis@schoolhub.edu",
     avatarUrl: null,
-    role: "student" as const,
+    role: "student",
     headline: "Physics lab assistant",
     points: 74,
   };
+
+  const currentUser =
+    role === "admin" ? admin : role === "student" ? studentOne : teacher;
+  const currentMembershipRole: MembershipRole =
+    currentUser.role === "admin"
+      ? "admin"
+      : currentUser.role === "teacher"
+        ? "teacher"
+        : "member";
 
   const departments = [
     {
@@ -64,7 +94,7 @@ export function getDemoWorkspaceData(): WorkspaceData {
       emoji: null,
       color: "#d9caee",
       isLobby: true,
-      membershipRole: "teacher" as const,
+      membershipRole: currentMembershipRole,
       memberCount: 84,
     },
     {
@@ -75,7 +105,7 @@ export function getDemoWorkspaceData(): WorkspaceData {
       emoji: null,
       color: "#efbfd3",
       isLobby: false,
-      membershipRole: "teacher" as const,
+      membershipRole: currentMembershipRole,
       memberCount: 26,
     },
     {
@@ -86,14 +116,14 @@ export function getDemoWorkspaceData(): WorkspaceData {
       emoji: null,
       color: "#bfe0e4",
       isLobby: false,
-      membershipRole: "teacher" as const,
+      membershipRole: currentMembershipRole,
       memberCount: 31,
     },
   ];
 
   return {
     kind: "workspace",
-    currentUser: teacher,
+    currentUser,
     departments,
     directThreads: [
       {
@@ -101,7 +131,7 @@ export function getDemoWorkspaceData(): WorkspaceData {
         title: "Advisory Mentors",
         isGroup: true,
         createdAt: isoHoursFromNow(-30),
-        participants: [teacher, studentOne, studentTwo],
+        participants: uniqueUsers([currentUser, teacher, studentTwo]),
         lastMessagePreview: "Can we pin the review rubric before the critique?",
       },
       {
@@ -109,7 +139,7 @@ export function getDemoWorkspaceData(): WorkspaceData {
         title: null,
         isGroup: false,
         createdAt: isoHoursFromNow(-20),
-        participants: [teacher, studentThree],
+        participants: uniqueUsers([currentUser, studentThree]),
         lastMessagePreview: "I uploaded the updated notes for the lab demo.",
       },
     ],
@@ -130,7 +160,7 @@ export function getDemoWorkspaceData(): WorkspaceData {
         body: "The robotics showcase now follows the assembly instead of happening before lunch.",
         pinned: true,
         createdAt: isoHoursFromNow(-5),
-        author: teacher,
+        author: currentUser.role === "admin" ? admin : teacher,
       },
       {
         id: "announcement-science",
@@ -278,7 +308,7 @@ export function getDemoWorkspaceData(): WorkspaceData {
         createdAt: isoMinutesFromNow(-30),
         updatedAt: isoMinutesFromNow(-30),
         attachment: null,
-        author: teacher,
+        author: currentUser.role === "student" ? teacher : currentUser,
         reactions: [],
       },
     ],
@@ -429,6 +459,13 @@ export function getDemoWorkspaceData(): WorkspaceData {
       { departmentId: "dept-science", role: "teacher", user: teacher },
       { departmentId: "dept-science", role: "member", user: studentTwo },
       { departmentId: "dept-science", role: "member", user: studentThree },
+      ...(currentUser.role === "admin"
+        ? [
+            { departmentId: "dept-lobby", role: "admin" as const, user: admin },
+            { departmentId: "dept-design", role: "admin" as const, user: admin },
+            { departmentId: "dept-science", role: "admin" as const, user: admin },
+          ]
+        : []),
     ],
   };
 }

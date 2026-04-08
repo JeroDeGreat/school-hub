@@ -56,7 +56,9 @@ export function WorkspaceHelpBoard({
         <div key={request.id} className="rounded-[1.7rem] bg-white/80 p-5 dark:bg-white/6">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="text-sm text-muted">{formatRelativeTime(request.createdAt)}</p>
+              <p suppressHydrationWarning className="text-sm text-muted">
+                {formatRelativeTime(request.createdAt)}
+              </p>
               <h3 className="mt-1 text-2xl">{request.title}</h3>
             </div>
             <div className="rounded-full bg-black/5 px-4 py-2 text-sm text-muted dark:bg-white/10">

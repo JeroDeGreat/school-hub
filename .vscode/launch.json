@@ -5,7 +5,7 @@
       "name": "School Hub Phone Preview",
       "type": "pwa-msedge",
       "request": "launch",
-      "url": "http://127.0.0.1:3000/preview",
+      "url": "http://127.0.0.1:3000/phone?role=admin&view=chat",
       "webRoot": "${workspaceFolder}",
       "preLaunchTask": "Preview School Hub"
     },
@@ -13,7 +13,7 @@
       "name": "School Hub Demo Workspace",
       "type": "pwa-msedge",
       "request": "launch",
-      "url": "http://127.0.0.1:3000/demo",
+      "url": "http://127.0.0.1:3000/demo?role=admin",
       "webRoot": "${workspaceFolder}",
       "preLaunchTask": "Preview School Hub"
     },

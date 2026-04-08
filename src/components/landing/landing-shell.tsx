@@ -11,24 +11,20 @@ import {
   MessagesSquare,
 } from "lucide-react";
 import { AuthCard } from "@/components/auth/auth-card";
+import { SchoolHubLogo } from "@/components/brand/school-hub-logo";
 
 export function LandingShell({ mode }: { mode: "setup" | "guest" | "schema" }) {
   const isSetup = mode === "setup";
   const isSchema = mode === "schema";
+  const isGuest = mode === "guest";
+  const primaryCtaHref = isGuest ? "/phone?role=admin&view=chat" : "/phone";
+  const primaryCtaLabel = isGuest ? "Open phone demo" : "Open phone preview";
 
   return (
     <main className="relative overflow-hidden px-5 py-6 sm:px-8 lg:px-12">
       <div className="mx-auto flex min-h-[calc(100svh-3rem)] max-w-7xl flex-col gap-8">
         <header className="glass-panel flex items-center justify-between rounded-full border border-white/50 px-4 py-3 dark:border-white/10">
-          <div className="flex items-center gap-3">
-            <div className="grid h-11 w-11 place-items-center rounded-full bg-accent text-sm font-bold text-white dark:bg-white dark:text-black">
-              SH
-            </div>
-            <div>
-              <p className="font-semibold">School Hub</p>
-              <p className="text-sm text-muted">One place for school communication</p>
-            </div>
-          </div>
+          <SchoolHubLogo compact />
           <div className="hidden items-center gap-3 rounded-full bg-white/70 px-4 py-2 text-sm text-muted md:flex dark:bg-white/5">
             <BellDot className="h-4 w-4" />
             Realtime, secure, ready for Supabase auth
@@ -46,29 +42,31 @@ export function LandingShell({ mode }: { mode: "setup" | "guest" | "schema" }) {
             <div className="relative z-10">
               <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-black/5 px-4 py-2 text-xs font-semibold tracking-[0.24em] text-muted uppercase dark:bg-white/5">
                 <GraduationCap className="h-3.5 w-3.5" />
-                Production-ready school platform
+                {isGuest ? "Sign in first" : "Production-ready school platform"}
               </p>
               <h1 className="max-w-3xl text-5xl leading-[0.95] text-foreground sm:text-6xl xl:text-7xl">
-                Replace scattered chats with a calmer campus command center.
+                {isGuest
+                  ? "Login, create an account, or spin up a local admin in one calm step."
+                  : "Replace scattered chats with a calmer campus command center."}
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-7 text-muted sm:text-lg">
-                School Hub merges department chat, assignments, announcements,
-                peer help, and real-time notifications in one responsive space
-                built with Next.js, Tailwind, and Supabase.
+                {isGuest
+                  ? "School Hub brings departments, assignments, messages, and peer support into one workspace. Use the sign-in panel to enter the real app, or open the admin demo to test the experience immediately."
+                  : "School Hub merges department chat, assignments, announcements, peer help, and real-time notifications in one responsive space built with Next.js, Tailwind, and Supabase."}
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
-                  href="/preview"
+                  href={primaryCtaHref}
                   className="inline-flex items-center justify-center rounded-full bg-accent px-5 py-3 text-sm font-semibold text-white transition hover:translate-y-[-1px] dark:bg-white dark:text-black"
                 >
-                  Open mobile preview
+                  {primaryCtaLabel}
                 </Link>
                 <Link
-                  href="/demo"
+                  href="/demo?role=admin"
                   className="inline-flex items-center justify-center rounded-full border border-black/10 bg-white/75 px-5 py-3 text-sm font-semibold text-foreground transition hover:bg-white dark:border-white/10 dark:bg-white/8"
                 >
-                  Open live demo workspace
+                  Open admin demo workspace
                 </Link>
               </div>
 
@@ -83,9 +81,10 @@ export function LandingShell({ mode }: { mode: "setup" | "guest" | "schema" }) {
                   </div>
                   <div className="space-y-3">
                     <div className="rounded-[1.4rem] bg-white/70 p-4 dark:bg-white/8">
-                      <p className="text-sm font-semibold">Today’s focus</p>
+                      <p className="text-sm font-semibold">Today&apos;s focus</p>
                       <p className="mt-1 text-sm leading-6 text-muted">
-                        Announcements, call links, mentions, and department handoffs stay visible instead of disappearing inside group chats.
+                        Announcements, call links, mentions, and department handoffs
+                        stay visible instead of disappearing inside group chats.
                       </p>
                     </div>
                     <div className="grid grid-cols-3 gap-3 text-center">
@@ -122,7 +121,9 @@ export function LandingShell({ mode }: { mode: "setup" | "guest" | "schema" }) {
                     </div>
                     <div className="rounded-[1.4rem] bg-[#efbfd3]/70 p-4 dark:bg-[#3a2832]">
                       <p className="text-sm font-semibold">Microscope reflection</p>
-                      <p className="mt-1 text-sm text-muted">Upload notes, files, and review feedback in one thread.</p>
+                      <p className="mt-1 text-sm text-muted">
+                        Upload notes, files, and review feedback in one thread.
+                      </p>
                     </div>
                   </div>
 
@@ -130,14 +131,17 @@ export function LandingShell({ mode }: { mode: "setup" | "guest" | "schema" }) {
                     <div className="mb-4 flex items-center justify-between">
                       <div>
                         <p className="text-sm text-muted">Peer support</p>
-                        <h3 className="text-2xl text-foreground">Help requests that reward good citizenship</h3>
+                        <h3 className="text-2xl text-foreground">
+                          Help requests that reward good citizenship
+                        </h3>
                       </div>
                       <HandHelping className="h-10 w-10 rounded-full bg-black/6 p-2.5 dark:bg-white/10" />
                     </div>
                     <div className="flex items-center gap-3 rounded-[1.4rem] bg-[#bfe0e4]/70 p-4 dark:bg-[#1f3341]">
                       <BriefcaseBusiness className="h-9 w-9 rounded-full bg-white/70 p-2 dark:bg-white/10" />
                       <p className="text-sm leading-6 text-muted">
-                        Volunteer, earn points, unlock badges, and keep the school knowledge loop active.
+                        Volunteer, earn points, unlock badges, and keep the school
+                        knowledge loop active.
                       </p>
                     </div>
                   </div>
@@ -210,25 +214,31 @@ export function LandingShell({ mode }: { mode: "setup" | "guest" | "schema" }) {
                 <p className="mb-3 text-xs font-semibold tracking-[0.24em] text-muted uppercase">
                   Database setup pending
                 </p>
-                <h2 className="text-3xl text-foreground">Supabase auth is connected, but the School Hub schema is not installed yet</h2>
+                <h2 className="text-3xl text-foreground">
+                  Supabase auth is connected, but the School Hub schema is not
+                  installed yet
+                </h2>
                 <p className="mt-3 text-sm leading-6 text-muted">
-                  Your project responded to auth and API requests, but the app tables
-                  like <code className="mx-1 rounded bg-black/5 px-1.5 py-0.5 text-xs dark:bg-white/10">departments</code>
+                  Your project responded to auth and API requests, but the app
+                  tables like
+                  <code className="mx-1 rounded bg-black/5 px-1.5 py-0.5 text-xs dark:bg-white/10">
+                    departments
+                  </code>
                   are not in the schema cache yet. Apply the migration and the live
                   workspace will boot automatically for signed-in users.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-3">
                   <Link
-                    href="/preview"
+                    href="/phone"
                     className="inline-flex items-center justify-center rounded-full bg-accent px-5 py-3 text-sm font-semibold text-white dark:bg-white dark:text-black"
                   >
                     Preview the mobile UI
                   </Link>
                   <Link
-                    href="/demo"
+                    href="/demo?role=admin"
                     className="inline-flex items-center justify-center rounded-full border border-black/10 bg-white/75 px-5 py-3 text-sm font-semibold text-foreground dark:border-white/10 dark:bg-white/8"
                   >
-                    Open the demo workspace
+                    Open the admin demo
                   </Link>
                 </div>
               </div>

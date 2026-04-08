@@ -75,8 +75,8 @@ npm run dev
 4. Open one of these:
 
 - [http://localhost:3000](http://localhost:3000) for the live app shell
-- [http://localhost:3000/demo](http://localhost:3000/demo) for a local interactive demo workspace
-- [http://localhost:3000/preview](http://localhost:3000/preview) for phone-sized preview frames in the browser
+- [http://localhost:3000/demo?role=admin](http://localhost:3000/demo?role=admin) for a local admin demo workspace
+- [http://localhost:3000/phone?role=admin&view=chat](http://localhost:3000/phone?role=admin&view=chat) for the single-phone preview
 
 ## One-Click Preview
 
@@ -86,7 +86,7 @@ On Windows, you can now launch the app with one click:
 2. It will:
    - install dependencies if needed
    - start the local preview server
-   - open the phone-style preview page automatically
+   - open the phone-style admin preview page automatically
 
 If you are inside VS Code, you can also run the `Preview School Hub` task from:
 
@@ -108,7 +108,24 @@ If you want the preview inside VS Code instead of your normal browser:
 1. Open `Terminal` -> `Run Task...`
 2. Choose `Preview School Hub In Editor`
 
-That uses VS Code's built-in browser tab and opens `http://127.0.0.1:3000/preview` inside the editor.
+That uses VS Code's built-in browser tab and opens `http://127.0.0.1:3000/phone?role=admin&view=chat` inside the editor.
+
+If you are using a separate VS Code phone emulator extension, paste this URL into it:
+
+`http://127.0.0.1:3000/demo?role=admin`
+
+That extension already wraps the page in a phone frame, so the direct demo URL works best there.
+
+## Admin Test Login
+
+On localhost, the sign-in card includes a `Create local admin test account` button.
+
+It creates and signs into:
+
+- email: `admin@schoolhub.local`
+- password: `SchoolHubAdmin123!`
+
+This helper is restricted to local development and is blocked in production.
 
 ## Verification
 

@@ -6,6 +6,8 @@ import { Avatar, AttachmentButton } from "@/components/workspace/workspace-ui";
 import type { MessageSummary, UserSummary } from "@/lib/types/app";
 import { cn, formatRelativeTime } from "@/lib/utils";
 
+const reactionOptions = ["👍", "❤", "🎯"];
+
 export function WorkspaceChat({
   currentUser,
   messages,
@@ -62,7 +64,7 @@ export function WorkspaceChat({
                   {message.author?.handle ? (
                     <span className="text-xs opacity-70">@{message.author.handle}</span>
                   ) : null}
-                  <span className="text-xs opacity-70">
+                  <span suppressHydrationWarning className="text-xs opacity-70">
                     {formatRelativeTime(message.createdAt)}
                   </span>
                 </div>
@@ -73,7 +75,7 @@ export function WorkspaceChat({
                   </div>
                 ) : null}
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {["👍", "❤️", "🎯"].map((emoji) => (
+                  {reactionOptions.map((emoji) => (
                     <button
                       key={emoji}
                       type="button"
@@ -109,7 +111,7 @@ export function WorkspaceChat({
           </div>
         ) : null}
         {typing.length > 0 ? (
-          <p className="mb-3 text-sm text-muted">{typing.join(", ")} typing…</p>
+          <p className="mb-3 text-sm text-muted">{typing.join(", ")} typing...</p>
         ) : null}
         {file ? (
           <div className="mb-3 flex items-center justify-between rounded-[1.1rem] bg-black/5 px-3 py-2 text-sm text-muted dark:bg-white/8">

@@ -7,8 +7,8 @@ param(
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$previewUrl = "http://127.0.0.1:$Port/preview"
-$demoUrl = "http://127.0.0.1:$Port/demo"
+$previewUrl = "http://127.0.0.1:$Port/phone?role=admin&view=chat"
+$demoUrl = "http://127.0.0.1:$Port/demo?role=admin"
 $logDir = Join-Path $env:TEMP "school-hub-preview"
 
 function Require-Command {

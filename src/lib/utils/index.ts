@@ -69,5 +69,5 @@ export function attachmentLabel(attachment: AttachmentPayload | null) {
 
   const sizeInMb = attachment.size / (1024 * 1024);
 
-  return `${attachment.filename} • ${sizeInMb.toFixed(sizeInMb > 10 ? 0 : 1)} MB`;
+  return `${attachment.filename} - ${sizeInMb.toFixed(sizeInMb > 10 ? 0 : 1)} MB`;
 }

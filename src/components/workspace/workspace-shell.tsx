@@ -6,6 +6,7 @@ import {
   BookCheck,
   HandHelping,
   LogOut,
+  Menu,
   MessageCircleMore,
   MoonStar,
   SunMedium,
@@ -100,6 +101,7 @@ export function WorkspaceShell({
   const [departmentId, setDepartmentId] = useState(initialData.departments[0]?.id ?? null);
   const [threadId, setThreadId] = useState(initialData.directThreads[0]?.id ?? null);
   const [query, setQuery] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [messageFile, setMessageFile] = useState<File | null>(null);
   const [replyToId, setReplyToId] = useState<string | null>(null);
@@ -376,7 +378,16 @@ export function WorkspaceShell({
   return (
     <main className="px-4 py-4 sm:px-6 lg:px-8">
       <div className="mx-auto flex min-h-[calc(100svh-2rem)] max-w-[1600px] flex-col gap-4 lg:flex-row">
+        {sidebarOpen ? (
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+            aria-label="Close navigation overlay"
+          />
+        ) : null}
         <WorkspaceSidebar
+          className="hidden lg:block lg:max-w-[320px]"
           data={data}
           roomMode={roomMode}
           activeDepartmentId={department?.id ?? null}
@@ -384,13 +395,114 @@ export function WorkspaceShell({
           query={query}
           setQuery={setQuery}
           filteredThreads={filteredThreads}
-          onDepartmentSelect={(nextDepartmentId) => startTransition(() => { setRoomMode("department"); setDepartmentId(nextDepartmentId); })}
-          onThreadSelect={(nextThreadId) => startTransition(() => { setRoomMode("direct"); setThreadId(nextThreadId); setView("chat"); })}
+          onDepartmentSelect={(nextDepartmentId) =>
+            startTransition(() => {
+              setRoomMode("department");
+              setDepartmentId(nextDepartmentId);
+            })
+          }
+          onThreadSelect={(nextThreadId) =>
+            startTransition(() => {
+              setRoomMode("direct");
+              setThreadId(nextThreadId);
+              setView("chat");
+            })
+          }
         />
-        <section className="flex min-w-0 flex-1 flex-col gap-4">
+        <WorkspaceSidebar
+          className={cn(
+            "fixed inset-y-4 left-4 z-40 max-h-[calc(100svh-2rem)] w-[min(320px,calc(100vw-2rem))] overflow-y-auto shadow-[0_25px_70px_rgba(14,11,31,0.24)] transition-transform duration-300 lg:hidden",
+            sidebarOpen ? "translate-x-0" : "-translate-x-[115%]",
+          )}
+          data={data}
+          roomMode={roomMode}
+          activeDepartmentId={department?.id ?? null}
+          activeThreadId={thread?.id ?? null}
+          query={query}
+          setQuery={setQuery}
+          filteredThreads={filteredThreads}
+          onDepartmentSelect={(nextDepartmentId) =>
+            startTransition(() => {
+              setRoomMode("department");
+              setDepartmentId(nextDepartmentId);
+              setSidebarOpen(false);
+            })
+          }
+          onThreadSelect={(nextThreadId) =>
+            startTransition(() => {
+              setRoomMode("direct");
+              setThreadId(nextThreadId);
+              setView("chat");
+              setSidebarOpen(false);
+            })
+          }
+          onClose={() => setSidebarOpen(false)}
+        />
+        <section className="flex min-w-0 flex-1 flex-col gap-4 pb-24 xl:pb-0">
           <header className="glass-panel flex flex-wrap items-center justify-between gap-4 rounded-[2rem] border border-white/55 p-4 dark:border-white/10">
-            <div><p className="text-sm text-muted">{roomMode === "department" ? "Department space" : "Direct thread"}</p><h1 className="mt-1 text-3xl">{roomName}</h1></div>
-            <div className="flex flex-wrap items-center gap-2"><div className="rounded-full bg-white/70 px-4 py-2 text-sm text-muted dark:bg-white/5">{data.currentUser.points} points</div>{isDemo ? <div className="rounded-full bg-black/6 px-4 py-2 text-sm font-semibold text-muted dark:bg-white/8">Preview mode</div> : null}<a href={buildCallLink(roomName)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white dark:bg-white dark:text-black"><Video className="h-4 w-4" />Start huddle</a><button type="button" onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")} className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/70 dark:bg-white/5">{resolvedTheme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}</button><button type="button" onClick={async () => { if (!supabase || isDemo) { window.location.assign("/"); return; } await supabase.auth.signOut(); window.location.reload(); }} className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/70 dark:bg-white/5"><LogOut className="h-4 w-4" /></button></div>
+            <div className="flex items-start gap-3">
+              <button
+                type="button"
+                onClick={() => setSidebarOpen(true)}
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/70 lg:hidden dark:bg-white/5"
+                aria-label="Open navigation"
+              >
+                <Menu className="h-4 w-4" />
+              </button>
+              <div>
+                <p className="text-sm text-muted">
+                  {roomMode === "department" ? "Department space" : "Direct thread"}
+                </p>
+                <h1 className="mt-1 text-3xl">{roomName}</h1>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="rounded-full bg-white/70 px-4 py-2 text-sm text-muted dark:bg-white/5">
+                {data.currentUser.points} points
+              </div>
+              <div className="rounded-full bg-black/6 px-4 py-2 text-sm font-semibold text-muted capitalize dark:bg-white/8">
+                {data.currentUser.role}
+              </div>
+              {isDemo ? (
+                <div className="rounded-full bg-black/6 px-4 py-2 text-sm font-semibold text-muted dark:bg-white/8">
+                  Preview mode
+                </div>
+              ) : null}
+              <a
+                href={buildCallLink(roomName)}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white dark:bg-white dark:text-black"
+              >
+                <Video className="h-4 w-4" />
+                Start huddle
+              </a>
+              <button
+                type="button"
+                onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/70 dark:bg-white/5"
+              >
+                {resolvedTheme === "dark" ? (
+                  <SunMedium className="h-4 w-4" />
+                ) : (
+                  <MoonStar className="h-4 w-4" />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!supabase || isDemo) {
+                    window.location.assign("/");
+                    return;
+                  }
+                  await supabase.auth.signOut();
+                  window.location.reload();
+                }}
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/70 dark:bg-white/5"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
           </header>
           <div className="grid min-h-0 flex-1 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
             <div className="glass-panel min-h-0 rounded-[2rem] border border-white/55 p-4 dark:border-white/10">

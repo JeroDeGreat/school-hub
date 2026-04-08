@@ -1,6 +1,7 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
+import { SchoolHubLogo } from "@/components/brand/school-hub-logo";
 import type { DirectThreadSummary, WorkspaceData } from "@/lib/types/app";
 import { cn } from "@/lib/utils";
 import type { RoomMode } from "@/components/workspace/workspace-types";
@@ -15,6 +16,8 @@ export function WorkspaceSidebar({
   filteredThreads,
   onDepartmentSelect,
   onThreadSelect,
+  onClose,
+  className,
 }: {
   data: WorkspaceData;
   roomMode: RoomMode;
@@ -25,21 +28,39 @@ export function WorkspaceSidebar({
   filteredThreads: DirectThreadSummary[];
   onDepartmentSelect: (departmentId: string) => void;
   onThreadSelect: (threadId: string) => void;
+  onClose?: () => void;
+  className?: string;
 }) {
   const filteredDepartments = data.departments.filter((department) =>
     department.name.toLowerCase().includes(query.toLowerCase()),
   );
 
   return (
-    <aside className="glass-panel w-full rounded-[2rem] border border-white/55 p-4 lg:max-w-[320px] dark:border-white/10">
-      <div className="flex items-center gap-3">
-        <div className="grid h-12 w-12 place-items-center rounded-full bg-accent text-sm font-bold text-white dark:bg-white dark:text-black">
-          SH
-        </div>
-        <div>
-          <p className="font-semibold">School Hub</p>
-          <p className="text-sm text-muted">@{data.currentUser.handle}</p>
-        </div>
+    <aside
+      className={cn(
+        "glass-panel w-full rounded-[2rem] border border-white/55 p-4 dark:border-white/10",
+        className,
+      )}
+    >
+      <div className="flex items-center justify-between gap-3">
+        <SchoolHubLogo compact />
+        {onClose ? (
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/70 lg:hidden dark:bg-white/5"
+            aria-label="Close navigation"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        ) : null}
+      </div>
+
+      <div className="mt-3 rounded-[1.4rem] bg-black/4 px-4 py-3 text-sm dark:bg-white/6">
+        <p className="font-semibold text-foreground">{data.currentUser.fullName}</p>
+        <p className="text-muted">
+          @{data.currentUser.handle} · {data.currentUser.role}
+        </p>
       </div>
 
       <div className="mt-4 flex items-center gap-3 rounded-[1.5rem] border border-line bg-white/70 px-4 py-3 dark:bg-white/5">

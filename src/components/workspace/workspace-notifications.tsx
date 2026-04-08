@@ -40,7 +40,7 @@ export function WorkspaceNotifications({
         >
           <p className="text-sm font-semibold">{notification.title}</p>
           <p className="mt-2 text-sm leading-6 text-muted">{notification.body}</p>
-          <p className="mt-3 text-xs text-muted">
+          <p suppressHydrationWarning className="mt-3 text-xs text-muted">
             {formatRelativeTime(notification.createdAt)}
           </p>
         </div>
