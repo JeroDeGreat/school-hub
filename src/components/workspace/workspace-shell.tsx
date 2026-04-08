@@ -81,10 +81,21 @@ function normalizeMessage(row: {
   };
 }
 
-export function WorkspaceShell({ initialData }: { initialData: WorkspaceData }) {
-  const [supabase] = useState(() => createBrowserSupabaseClient());
+type WorkspaceShellProps = {
+  initialData: WorkspaceData;
+  mode?: "live" | "demo";
+  initialView?: WorkspaceView;
+};
+
+export function WorkspaceShell({
+  initialData,
+  mode = "live",
+  initialView = "chat",
+}: WorkspaceShellProps) {
+  const isDemo = mode === "demo";
+  const [supabase] = useState(() => (isDemo ? null : createBrowserSupabaseClient()));
   const [data, setData] = useState(initialData);
-  const [view, setView] = useState<WorkspaceView>("chat");
+  const [view, setView] = useState<WorkspaceView>(initialView);
   const [roomMode, setRoomMode] = useState<RoomMode>("department");
   const [departmentId, setDepartmentId] = useState(initialData.departments[0]?.id ?? null);
   const [threadId, setThreadId] = useState(initialData.directThreads[0]?.id ?? null);
@@ -138,6 +149,7 @@ export function WorkspaceShell({ initialData }: { initialData: WorkspaceData }) 
   const filteredThreads = data.directThreads.filter((item) => (item.title ?? item.participants.map((person) => person.fullName).join(" ")).toLowerCase().includes(deferredQuery.toLowerCase()));
 
   const onIncomingMessage = useEffectEvent(async (messageId: string) => {
+    if (!supabase) return;
     const { data: rawRow } = await supabase.from("messages").select(messageSelect).eq("id", messageId).single();
     const row = rawRow as Parameters<typeof normalizeMessage>[0] | null;
     if (!row) return;
@@ -148,7 +160,7 @@ export function WorkspaceShell({ initialData }: { initialData: WorkspaceData }) 
   });
 
   useEffect(() => {
-    if (!roomId) return;
+    if (!roomId || !supabase || isDemo) return;
     const filter = roomMode === "department" ? `department_id=eq.${roomId}` : `direct_thread_id=eq.${roomId}`;
     const channel = supabase.channel(`room:${roomMode}:${roomId}`);
     roomChannel.current = channel;
@@ -165,9 +177,10 @@ export function WorkspaceShell({ initialData }: { initialData: WorkspaceData }) 
       setTyping([]);
       if (roomChannel.current) void supabase.removeChannel(roomChannel.current);
     };
-  }, [data.currentUser.handle, roomId, roomMode, supabase]);
+  }, [data.currentUser.handle, isDemo, roomId, roomMode, supabase]);
 
   useEffect(() => {
+    if (!supabase || isDemo) return;
     const channel = supabase.channel(`notifications:${data.currentUser.id}`);
     channel
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${data.currentUser.id}` }, (payload) => {
@@ -190,10 +203,19 @@ export function WorkspaceShell({ initialData }: { initialData: WorkspaceData }) 
       })
       .subscribe();
     return () => void supabase.removeChannel(channel);
-  }, [data.currentUser.id, supabase]);
+  }, [data.currentUser.id, isDemo, supabase]);
 
   async function uploadAttachment(bucket: string, targetId: string, targetFile: File) {
     const path = `${targetId}/${crypto.randomUUID()}-${targetFile.name}`;
+    if (!supabase || isDemo) {
+      return {
+        bucket: "preview",
+        path,
+        filename: targetFile.name,
+        mimeType: targetFile.type || "application/octet-stream",
+        size: targetFile.size,
+      } satisfies AttachmentPayload;
+    }
     const { error } = await supabase.storage.from(bucket).upload(path, targetFile, { upsert: false });
     if (error) throw error;
     return { bucket, path, filename: targetFile.name, mimeType: targetFile.type || "application/octet-stream", size: targetFile.size } satisfies AttachmentPayload;
@@ -203,6 +225,32 @@ export function WorkspaceShell({ initialData }: { initialData: WorkspaceData }) 
     if (!roomId || (!draft.trim() && !messageFile)) return;
     try {
       const attachment = messageFile ? await uploadAttachment("department-files", roomId, messageFile) : null;
+      if (!supabase || isDemo) {
+        setData((current) => ({
+          ...current,
+          messages: [
+            ...current.messages,
+            {
+              id: crypto.randomUUID(),
+              body: draft.trim() || `Shared ${messageFile?.name ?? "a file"}`,
+              departmentId: roomMode === "department" ? roomId : null,
+              directThreadId: roomMode === "direct" ? roomId : null,
+              parentMessageId: replyToId,
+              kind: attachment ? "file" : "message",
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              attachment,
+              author: current.currentUser,
+              reactions: [],
+            },
+          ],
+        }));
+        setDraft("");
+        setMessageFile(null);
+        setReplyToId(null);
+        setNotice("Preview mode keeps your changes locally in the browser.");
+        return;
+      }
       const { data: rawRow, error } = await supabase.from("messages").insert({
         author_id: data.currentUser.id,
         body: draft.trim() || `Shared ${messageFile?.name ?? "a file"}`,
@@ -223,13 +271,16 @@ export function WorkspaceShell({ initialData }: { initialData: WorkspaceData }) 
 
   async function toggleReaction(messageId: string, emoji: string) {
     setData((current) => ({ ...current, messages: current.messages.map((message) => message.id !== messageId ? message : { ...message, reactions: message.reactions.some((reaction) => reaction.userId === current.currentUser.id && reaction.emoji === emoji) ? message.reactions.filter((reaction) => !(reaction.userId === current.currentUser.id && reaction.emoji === emoji)) : [...message.reactions, { emoji, userId: current.currentUser.id }] }) }));
+    if (!supabase || isDemo) return;
     await supabase.rpc("toggle_message_reaction", { target_message: messageId, reaction_emoji: emoji });
   }
 
   async function createAssignment() {
     if (!department || !canManage || !assignmentTitle.trim() || !assignmentDueAt) return;
-    const { error } = await supabase.from("assignments").insert({ department_id: department.id, author_id: data.currentUser.id, title: assignmentTitle.trim(), instructions: assignmentInstructions.trim(), due_at: new Date(assignmentDueAt).toISOString() });
-    if (error) return setNotice(error.message);
+    if (supabase && !isDemo) {
+      const { error } = await supabase.from("assignments").insert({ department_id: department.id, author_id: data.currentUser.id, title: assignmentTitle.trim(), instructions: assignmentInstructions.trim(), due_at: new Date(assignmentDueAt).toISOString() });
+      if (error) return setNotice(error.message);
+    }
     setData((current) => ({
       ...current,
       assignments: [
@@ -249,14 +300,16 @@ export function WorkspaceShell({ initialData }: { initialData: WorkspaceData }) 
         ...current.assignments,
       ],
     }));
-    setAssignmentTitle(""); setAssignmentInstructions(""); setAssignmentDueAt(""); setNotice("Assignment published.");
+    setAssignmentTitle(""); setAssignmentInstructions(""); setAssignmentDueAt(""); setNotice(isDemo ? "Preview assignment published locally." : "Assignment published.");
   }
 
   async function submitAssignment() {
     if (!submissionAssignmentId) return;
     const attachment = messageFile ? await uploadAttachment("submission-files", submissionAssignmentId, messageFile) : null;
-    const { error } = await supabase.from("submissions").upsert({ assignment_id: submissionAssignmentId, student_id: data.currentUser.id, body: submissionBody.trim() || null, attachment }, { onConflict: "assignment_id,student_id" });
-    if (error) return setNotice(error.message);
+    if (supabase && !isDemo) {
+      const { error } = await supabase.from("submissions").upsert({ assignment_id: submissionAssignmentId, student_id: data.currentUser.id, body: submissionBody.trim() || null, attachment }, { onConflict: "assignment_id,student_id" });
+      if (error) return setNotice(error.message);
+    }
     setData((current) => ({
       ...current,
       assignments: current.assignments.map((assignment) =>
@@ -283,32 +336,40 @@ export function WorkspaceShell({ initialData }: { initialData: WorkspaceData }) 
                 },
               ],
             },
-      ),
+        ),
     }));
-    setSubmissionBody(""); setMessageFile(null); setNotice("Submission saved.");
+    setSubmissionBody(""); setMessageFile(null); setNotice(isDemo ? "Preview submission saved locally." : "Submission saved.");
   }
 
   async function createHelpRequest() {
     if (!department || !helpTitle.trim() || !helpDescription.trim()) return;
-    const { error } = await supabase.from("help_requests").insert({ department_id: department.id, author_id: data.currentUser.id, title: helpTitle.trim(), description: helpDescription.trim() });
-    if (error) return setNotice(error.message);
+    if (supabase && !isDemo) {
+      const { error } = await supabase.from("help_requests").insert({ department_id: department.id, author_id: data.currentUser.id, title: helpTitle.trim(), description: helpDescription.trim() });
+      if (error) return setNotice(error.message);
+    }
     const optimistic: HelpRequestSummary = { id: crypto.randomUUID(), departmentId: department.id, title: helpTitle.trim(), description: helpDescription.trim(), topicTags: [], status: "open", pointsReward: 15, createdAt: new Date().toISOString(), resolvedAt: null, author: data.currentUser, volunteer: null };
     setData((current) => ({ ...current, helpRequests: [optimistic, ...current.helpRequests] }));
-    setHelpTitle(""); setHelpDescription("");
+    setHelpTitle(""); setHelpDescription(""); setNotice(isDemo ? "Preview help request created locally." : null);
   }
 
   async function volunteer(helpRequestId: string) {
-    await supabase.rpc("volunteer_for_help_request", { target_help_request: helpRequestId });
+    if (supabase && !isDemo) {
+      await supabase.rpc("volunteer_for_help_request", { target_help_request: helpRequestId });
+    }
     setData((current) => ({ ...current, helpRequests: current.helpRequests.map((request) => request.id === helpRequestId ? { ...request, volunteer: current.currentUser, status: "matched" } : request) }));
   }
 
   async function resolve(helpRequestId: string) {
-    await supabase.rpc("resolve_help_request", { target_help_request: helpRequestId });
+    if (supabase && !isDemo) {
+      await supabase.rpc("resolve_help_request", { target_help_request: helpRequestId });
+    }
     setData((current) => ({ ...current, helpRequests: current.helpRequests.map((request) => request.id === helpRequestId ? { ...request, status: "resolved", resolvedAt: new Date().toISOString() } : request) }));
   }
 
   async function markAllRead() {
-    await supabase.rpc("mark_all_notifications_read");
+    if (supabase && !isDemo) {
+      await supabase.rpc("mark_all_notifications_read");
+    }
     setData((current) => ({ ...current, notifications: current.notifications.map((notification) => ({ ...notification, isRead: true })) }));
   }
 
@@ -329,7 +390,7 @@ export function WorkspaceShell({ initialData }: { initialData: WorkspaceData }) 
         <section className="flex min-w-0 flex-1 flex-col gap-4">
           <header className="glass-panel flex flex-wrap items-center justify-between gap-4 rounded-[2rem] border border-white/55 p-4 dark:border-white/10">
             <div><p className="text-sm text-muted">{roomMode === "department" ? "Department space" : "Direct thread"}</p><h1 className="mt-1 text-3xl">{roomName}</h1></div>
-            <div className="flex flex-wrap items-center gap-2"><div className="rounded-full bg-white/70 px-4 py-2 text-sm text-muted dark:bg-white/5">{data.currentUser.points} points</div><a href={buildCallLink(roomName)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white dark:bg-white dark:text-black"><Video className="h-4 w-4" />Start huddle</a><button type="button" onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")} className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/70 dark:bg-white/5">{resolvedTheme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}</button><button type="button" onClick={async () => { await supabase.auth.signOut(); window.location.reload(); }} className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/70 dark:bg-white/5"><LogOut className="h-4 w-4" /></button></div>
+            <div className="flex flex-wrap items-center gap-2"><div className="rounded-full bg-white/70 px-4 py-2 text-sm text-muted dark:bg-white/5">{data.currentUser.points} points</div>{isDemo ? <div className="rounded-full bg-black/6 px-4 py-2 text-sm font-semibold text-muted dark:bg-white/8">Preview mode</div> : null}<a href={buildCallLink(roomName)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white dark:bg-white dark:text-black"><Video className="h-4 w-4" />Start huddle</a><button type="button" onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")} className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/70 dark:bg-white/5">{resolvedTheme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}</button><button type="button" onClick={async () => { if (!supabase || isDemo) { window.location.assign("/"); return; } await supabase.auth.signOut(); window.location.reload(); }} className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/70 dark:bg-white/5"><LogOut className="h-4 w-4" /></button></div>
           </header>
           <div className="grid min-h-0 flex-1 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
             <div className="glass-panel min-h-0 rounded-[2rem] border border-white/55 p-4 dark:border-white/10">

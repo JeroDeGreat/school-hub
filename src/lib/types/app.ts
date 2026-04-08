@@ -181,4 +181,7 @@ export type HomePageData =
   | {
       kind: "guest";
     }
+  | {
+      kind: "schema";
+    }
   | WorkspaceData;

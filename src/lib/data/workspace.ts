@@ -210,13 +210,25 @@ export async function getHomePageData(): Promise<HomePageData> {
     };
   }
 
-  await supabase.rpc("ensure_school_defaults");
+  const bootstrapResult = await supabase.rpc("ensure_school_defaults");
+
+  if (bootstrapResult.error) {
+    return {
+      kind: "schema",
+    };
+  }
 
   const profileResult = await supabase
     .from("users")
     .select("id, full_name, handle, email, avatar_url, role, headline, points")
     .eq("id", user.id)
     .single();
+
+  if (profileResult.error) {
+    return {
+      kind: "schema",
+    };
+  }
 
   const profile = normalizeUser(profileResult.data);
 
@@ -233,6 +245,12 @@ export async function getHomePageData(): Promise<HomePageData> {
     )
     .eq("user_id", user.id)
     .order("joined_at", { ascending: true });
+
+  if (membershipsResult.error) {
+    return {
+      kind: "schema",
+    };
+  }
 
   const memberships = (membershipsResult.data ?? []) as unknown as MembershipRow[];
   const departments: DepartmentSummary[] = memberships.map(
@@ -268,7 +286,7 @@ export async function getHomePageData(): Promise<HomePageData> {
             "department_id, role, user:users(id, full_name, handle, email, avatar_url, role, headline, points)",
           )
           .in("department_id", departmentIds)
-      : Promise.resolve({ data: [] }),
+      : Promise.resolve({ data: [], error: null }),
     supabase
       .from("direct_thread_members")
       .select("thread_id, thread:direct_threads(id, title, is_group, created_at)")
@@ -282,7 +300,7 @@ export async function getHomePageData(): Promise<HomePageData> {
           .in("department_id", departmentIds)
           .order("pinned", { ascending: false })
           .order("created_at", { ascending: false })
-      : Promise.resolve({ data: [] }),
+      : Promise.resolve({ data: [], error: null }),
     departmentIds.length > 0
       ? supabase
           .from("department_resources")
@@ -291,7 +309,7 @@ export async function getHomePageData(): Promise<HomePageData> {
           )
           .in("department_id", departmentIds)
           .order("created_at", { ascending: false })
-      : Promise.resolve({ data: [] }),
+      : Promise.resolve({ data: [], error: null }),
     departmentIds.length > 0
       ? supabase
           .from("assignments")
@@ -300,7 +318,7 @@ export async function getHomePageData(): Promise<HomePageData> {
           )
           .in("department_id", departmentIds)
           .order("due_at", { ascending: true })
-      : Promise.resolve({ data: [] }),
+      : Promise.resolve({ data: [], error: null }),
     departmentIds.length > 0
       ? supabase
           .from("help_requests")
@@ -309,7 +327,7 @@ export async function getHomePageData(): Promise<HomePageData> {
           )
           .in("department_id", departmentIds)
           .order("created_at", { ascending: false })
-      : Promise.resolve({ data: [] }),
+      : Promise.resolve({ data: [], error: null }),
     supabase
       .from("notifications")
       .select(
@@ -324,6 +342,21 @@ export async function getHomePageData(): Promise<HomePageData> {
       .eq("user_id", user.id)
       .order("awarded_at", { ascending: false }),
   ]);
+
+  if (
+    directoryResult.error ||
+    threadMembershipsResult.error ||
+    announcementsResult.error ||
+    resourcesResult.error ||
+    assignmentsResult.error ||
+    helpRequestsResult.error ||
+    notificationsResult.error ||
+    badgesResult.error
+  ) {
+    return {
+      kind: "schema",
+    };
+  }
 
   const directoryRows = (directoryResult.data ?? []) as unknown as DirectoryRow[];
   const directory: MemberDirectoryEntry[] = directoryRows.map(
@@ -358,7 +391,7 @@ export async function getHomePageData(): Promise<HomePageData> {
               "thread_id, user:users(id, full_name, handle, email, avatar_url, role, headline, points)",
             )
             .in("thread_id", threadIds)
-        : Promise.resolve({ data: [] }),
+        : Promise.resolve({ data: [], error: null }),
       departmentIds.length > 0
         ? supabase
             .from("messages")
@@ -368,7 +401,7 @@ export async function getHomePageData(): Promise<HomePageData> {
             .in("department_id", departmentIds)
             .order("created_at", { ascending: true })
             .limit(180)
-        : Promise.resolve({ data: [] }),
+        : Promise.resolve({ data: [], error: null }),
       threadIds.length > 0
         ? supabase
             .from("messages")
@@ -378,8 +411,18 @@ export async function getHomePageData(): Promise<HomePageData> {
             .in("direct_thread_id", threadIds)
             .order("created_at", { ascending: true })
             .limit(120)
-        : Promise.resolve({ data: [] }),
+        : Promise.resolve({ data: [], error: null }),
     ]);
+
+  if (
+    threadParticipantsResult.error ||
+    departmentMessagesResult.error ||
+    directMessagesResult.error
+  ) {
+    return {
+      kind: "schema",
+    };
+  }
 
   const normalizeMessages = (rows: MessageRow[]): MessageSummary[] =>
     rows.map((message) => ({

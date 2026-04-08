@@ -45,6 +45,15 @@ export function AttachmentButton({
     return null;
   }
 
+  if (attachment.bucket === "preview") {
+    return (
+      <span className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-2 text-xs font-semibold">
+        <FileUp className="h-3.5 w-3.5" />
+        {attachmentLabel(attachment)}
+      </span>
+    );
+  }
+
   return (
     <button
       type="button"

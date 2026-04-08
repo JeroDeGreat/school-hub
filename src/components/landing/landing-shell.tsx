@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import {
   BellDot,
   BookOpenText,
@@ -11,8 +12,9 @@ import {
 } from "lucide-react";
 import { AuthCard } from "@/components/auth/auth-card";
 
-export function LandingShell({ mode }: { mode: "setup" | "guest" }) {
+export function LandingShell({ mode }: { mode: "setup" | "guest" | "schema" }) {
   const isSetup = mode === "setup";
+  const isSchema = mode === "schema";
 
   return (
     <main className="relative overflow-hidden px-5 py-6 sm:px-8 lg:px-12">
@@ -54,6 +56,21 @@ export function LandingShell({ mode }: { mode: "setup" | "guest" }) {
                 peer help, and real-time notifications in one responsive space
                 built with Next.js, Tailwind, and Supabase.
               </p>
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  href="/preview"
+                  className="inline-flex items-center justify-center rounded-full bg-accent px-5 py-3 text-sm font-semibold text-white transition hover:translate-y-[-1px] dark:bg-white dark:text-black"
+                >
+                  Open mobile preview
+                </Link>
+                <Link
+                  href="/demo"
+                  className="inline-flex items-center justify-center rounded-full border border-black/10 bg-white/75 px-5 py-3 text-sm font-semibold text-foreground transition hover:bg-white dark:border-white/10 dark:bg-white/8"
+                >
+                  Open live demo workspace
+                </Link>
+              </div>
 
               <div className="mt-8 grid gap-4 md:grid-cols-[1.1fr_0.9fr]">
                 <div className="rounded-[2rem] bg-[#d9caee]/70 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] dark:bg-[#251f36]/80">
@@ -187,6 +204,33 @@ export function LandingShell({ mode }: { mode: "setup" | "guest" }) {
                   The service role key must stay server-only. If the key you pasted
                   earlier is real, rotate it in Supabase before deploying.
                 </p>
+              </div>
+            ) : isSchema ? (
+              <div className="glass-panel-strong rounded-[2rem] border border-white/55 p-6 dark:border-white/10">
+                <p className="mb-3 text-xs font-semibold tracking-[0.24em] text-muted uppercase">
+                  Database setup pending
+                </p>
+                <h2 className="text-3xl text-foreground">Supabase auth is connected, but the School Hub schema is not installed yet</h2>
+                <p className="mt-3 text-sm leading-6 text-muted">
+                  Your project responded to auth and API requests, but the app tables
+                  like <code className="mx-1 rounded bg-black/5 px-1.5 py-0.5 text-xs dark:bg-white/10">departments</code>
+                  are not in the schema cache yet. Apply the migration and the live
+                  workspace will boot automatically for signed-in users.
+                </p>
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <Link
+                    href="/preview"
+                    className="inline-flex items-center justify-center rounded-full bg-accent px-5 py-3 text-sm font-semibold text-white dark:bg-white dark:text-black"
+                  >
+                    Preview the mobile UI
+                  </Link>
+                  <Link
+                    href="/demo"
+                    className="inline-flex items-center justify-center rounded-full border border-black/10 bg-white/75 px-5 py-3 text-sm font-semibold text-foreground dark:border-white/10 dark:bg-white/8"
+                  >
+                    Open the demo workspace
+                  </Link>
+                </div>
               </div>
             ) : (
               <AuthCard />

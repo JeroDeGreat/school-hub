@@ -72,7 +72,11 @@ Option B: Supabase SQL editor
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000)
+4. Open one of these:
+
+- [http://localhost:3000](http://localhost:3000) for the live app shell
+- [http://localhost:3000/demo](http://localhost:3000/demo) for a local interactive demo workspace
+- [http://localhost:3000/preview](http://localhost:3000/preview) for phone-sized preview frames in the browser
 
 ## Verification
 
@@ -120,6 +124,7 @@ It also includes:
 - Department huddles use generated Jitsi meeting links so calls work immediately without extra infrastructure
 - Mentions use `@handle`
 - The first authenticated session automatically bootstraps starter departments, resources, and sample activity
+- If the Supabase schema is missing, the homepage now shows a dedicated "database setup pending" state instead of crashing
 
 ## Project Structure
 
