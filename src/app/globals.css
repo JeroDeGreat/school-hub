@@ -1,0 +1,143 @@
+@import "@fontsource/manrope/latin.css";
+@import "@fontsource/sora/latin.css";
+@import "tailwindcss";
+
+:root {
+  --background: #f3edf7;
+  --foreground: #171521;
+  --muted: #6d6880;
+  --surface: rgba(255, 255, 255, 0.78);
+  --surface-strong: rgba(255, 255, 255, 0.92);
+  --surface-dark: rgba(20, 18, 31, 0.8);
+  --line: rgba(124, 105, 176, 0.2);
+  --accent: #201a34;
+  --accent-soft: #cba8c6;
+  --accent-alt: #9fc9d2;
+  --success: #2d8a6f;
+  --danger: #c85f77;
+  --shadow: 0 30px 80px rgba(51, 41, 78, 0.14);
+}
+
+.dark {
+  --background: #0f1017;
+  --foreground: #faf9ff;
+  --muted: #aaadc8;
+  --surface: rgba(18, 20, 33, 0.82);
+  --surface-strong: rgba(23, 26, 42, 0.92);
+  --surface-dark: rgba(13, 14, 22, 0.88);
+  --line: rgba(182, 168, 230, 0.14);
+  --accent: #f6f2ff;
+  --accent-soft: #8f6faa;
+  --accent-alt: #5b7d97;
+  --success: #74d4b6;
+  --danger: #f28ea6;
+  --shadow: 0 35px 90px rgba(0, 0, 0, 0.35);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-surface-dark: var(--surface-dark);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-alt: var(--accent-alt);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --font-sans: "Manrope", sans-serif;
+  --font-display: "Sora", sans-serif;
+}
+
+* {
+  border-color: var(--line);
+}
+
+html {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top left, rgba(205, 190, 227, 0.75), transparent 42%),
+    radial-gradient(circle at bottom right, rgba(173, 210, 222, 0.45), transparent 30%),
+    var(--background);
+  color: var(--foreground);
+}
+
+body {
+  min-height: 100vh;
+  background:
+    linear-gradient(125deg, rgba(255, 255, 255, 0.28), transparent 48%),
+    radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.35), transparent 24%),
+    var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+body::before,
+body::after {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+}
+
+body::before {
+  background:
+    linear-gradient(115deg, transparent 0 15%, rgba(255, 255, 255, 0.18) 15.2%, transparent 15.4%),
+    linear-gradient(320deg, transparent 0 72%, rgba(255, 255, 255, 0.2) 72.2%, transparent 72.4%);
+  opacity: 0.55;
+}
+
+body::after {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.55), transparent 16%),
+    radial-gradient(circle at 84% 22%, rgba(232, 189, 214, 0.28), transparent 16%),
+    radial-gradient(circle at 74% 84%, rgba(159, 201, 210, 0.2), transparent 18%);
+  mix-blend-mode: screen;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--font-display);
+  letter-spacing: -0.03em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(177, 150, 214, 0.35);
+}
+
+.glass-panel {
+  background: var(--surface);
+  backdrop-filter: blur(22px);
+  box-shadow: var(--shadow);
+}
+
+.glass-panel-strong {
+  background: var(--surface-strong);
+  backdrop-filter: blur(26px);
+  box-shadow: var(--shadow);
+}
+
+.subtle-grid {
+  background-image:
+    linear-gradient(to right, rgba(122, 108, 168, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(122, 108, 168, 0.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
