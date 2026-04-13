@@ -1,9 +1,9 @@
 "use client";
 
-import { Search, X } from "lucide-react";
+import { Search, Sparkles, X } from "lucide-react";
 import { SchoolHubLogo } from "@/components/brand/school-hub-logo";
 import type { DirectThreadSummary, WorkspaceData } from "@/lib/types/app";
-import { cn } from "@/lib/utils";
+import { cn, estimateTimeCredits } from "@/lib/utils";
 import type { RoomMode } from "@/components/workspace/workspace-types";
 
 export function WorkspaceSidebar({
@@ -34,6 +34,7 @@ export function WorkspaceSidebar({
   const filteredDepartments = data.departments.filter((department) =>
     department.name.toLowerCase().includes(query.toLowerCase()),
   );
+  const timeCredits = estimateTimeCredits(data.currentUser.points);
 
   return (
     <aside
@@ -56,11 +57,15 @@ export function WorkspaceSidebar({
         ) : null}
       </div>
 
-      <div className="mt-3 rounded-[1.4rem] bg-black/4 px-4 py-3 text-sm dark:bg-white/6">
+      <div className="mt-3 rounded-[1.5rem] bg-black/4 px-4 py-4 text-sm dark:bg-white/6">
         <p className="font-semibold text-foreground">{data.currentUser.fullName}</p>
-        <p className="text-muted">
-          @{data.currentUser.handle} · {data.currentUser.role}
+        <p className="mt-1 text-muted">
+          @{data.currentUser.handle} / {data.currentUser.role}
         </p>
+        <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-muted">
+          <Sparkles className="h-3.5 w-3.5" />
+          {data.currentUser.points} pts / {timeCredits} credits
+        </div>
       </div>
 
       <div className="mt-4 flex items-center gap-3 rounded-[1.5rem] border border-line bg-white/70 px-4 py-3 dark:bg-white/5">
@@ -89,14 +94,21 @@ export function WorkspaceSidebar({
                 : "bg-white/70 dark:bg-white/5",
             )}
           >
-            <p className="font-semibold">{department.name}</p>
-            <p className="text-xs opacity-70">{department.memberCount} members</p>
+            <div className="flex items-center justify-between gap-3">
+              <p className="font-semibold">{department.name}</p>
+              {department.isLobby ? (
+                <span className="rounded-full bg-black/8 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] dark:bg-white/12">
+                  Lobby
+                </span>
+              ) : null}
+            </div>
+            <p className="mt-1 text-xs opacity-70">{department.memberCount} members</p>
           </button>
         ))}
       </div>
 
       <p className="mt-5 mb-2 text-xs font-semibold tracking-[0.24em] text-muted uppercase">
-        DMs
+        Direct circles
       </p>
       <div className="space-y-2">
         {filteredThreads.length === 0 ? (

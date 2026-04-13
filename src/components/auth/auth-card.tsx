@@ -154,7 +154,7 @@ export function AuthCard() {
             <Sparkles className="h-3.5 w-3.5" />
             School Access
           </p>
-          <h2 className="text-3xl text-foreground">Log in before you enter the hub</h2>
+          <h2 className="text-3xl text-foreground">Log in before you enter ClassLoop</h2>
           <p className="mt-2 text-sm leading-6 text-muted">
             Use Google, email and password, or a magic link. If you are testing
             locally, you can spin up a ready-made admin account in one click.

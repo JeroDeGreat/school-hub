@@ -69,7 +69,7 @@
       "type": "command",
         "command": "simpleBrowser.api.open",
         "args": [
-        "http://127.0.0.1:3000/phone?role=admin&view=chat"
+        "http://127.0.0.1:3000/phone?role=admin&view=dashboard"
         ]
     },
     {

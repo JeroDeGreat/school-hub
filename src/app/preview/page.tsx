@@ -1,18 +1,18 @@
 const previews = [
   {
-    title: "Live chat",
-    description: "Department conversation, replies, reactions, and attachments.",
-    href: "/demo?view=chat",
+    title: "Home dashboard",
+    description: "Assignments, help matches, and school pulse in a phone frame.",
+    href: "/demo?role=admin&view=dashboard",
   },
   {
-    title: "Assignments",
-    description: "Publishing work, due dates, and submission cards.",
-    href: "/demo?view=assignments",
+    title: "Department spaces",
+    description: "Department cards, activity counts, and quick actions for each space.",
+    href: "/demo?role=admin&view=spaces",
   },
   {
     title: "Help board",
     description: "Volunteer matching, collaboration points, and support requests.",
-    href: "/demo?view=help",
+    href: "/demo?role=admin&view=help",
   },
 ];
 
@@ -52,7 +52,7 @@ export default function PreviewPage() {
       <div className="mx-auto max-w-7xl">
         <header className="glass-panel mb-8 rounded-[2.25rem] border border-white/55 px-6 py-6 dark:border-white/10">
           <p className="text-xs font-semibold tracking-[0.24em] text-muted uppercase">
-            School Hub preview
+            ClassLoop preview
           </p>
           <h1 className="mt-3 max-w-3xl text-5xl leading-[0.95] sm:text-6xl">
             Phone-sized product previews you can inspect right inside the browser.

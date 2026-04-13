@@ -7,7 +7,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$previewUrl = "http://127.0.0.1:$Port/phone?role=admin&view=chat"
+$previewUrl = "http://127.0.0.1:$Port/phone?role=admin&view=dashboard"
 $demoUrl = "http://127.0.0.1:$Port/demo?role=admin"
 $logDir = Join-Path $env:TEMP "school-hub-preview"
 
@@ -39,7 +39,7 @@ Require-Command -Name "npm" -InstallHint "Install Node.js from https://nodejs.or
 Set-Location $repoRoot
 
 if (-not (Test-Path (Join-Path $repoRoot "node_modules"))) {
-  Write-Host "Installing School Hub dependencies..."
+  Write-Host "Installing ClassLoop dependencies..."
   & npm.cmd install
   if ($LASTEXITCODE -ne 0) {
     throw "npm install failed."
@@ -49,7 +49,7 @@ if (-not (Test-Path (Join-Path $repoRoot "node_modules"))) {
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 
 if (-not (Test-PreviewReady -Url $previewUrl)) {
-  Write-Host "Starting School Hub preview server..."
+  Write-Host "Starting ClassLoop preview server..."
 
   $serverCommand = @(
     "Set-Location '$repoRoot'"
@@ -78,16 +78,16 @@ if (-not (Test-PreviewReady -Url $previewUrl)) {
   }
 
   if (-not $ready) {
-    throw "School Hub did not start within 2 minutes. Run npm run preview:phone in the repo to inspect the server directly."
+    throw "ClassLoop did not start within 2 minutes. Run npm run preview:phone in the repo to inspect the server directly."
   }
 }
 
 Write-Host ""
-Write-Host "School Hub preview is ready."
+Write-Host "ClassLoop preview is ready."
 Write-Host "Preview: $previewUrl"
 Write-Host "Demo:    $demoUrl"
 
 if ($OpenMode -eq "external") {
-  Write-Host "Opening School Hub phone preview..."
+  Write-Host "Opening ClassLoop phone preview..."
   Start-Process $previewUrl | Out-Null
 }

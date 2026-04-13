@@ -1,6 +1,6 @@
-# School Hub
+# ClassLoop
 
-School Hub is a full-stack school collaboration platform built with Next.js, TypeScript, Tailwind CSS, Framer Motion, and Supabase.
+ClassLoop is a full-stack school collaboration platform built with Next.js, TypeScript, Tailwind CSS, Framer Motion, and Supabase.
 
 It combines:
 
@@ -76,7 +76,7 @@ npm run dev
 
 - [http://localhost:3000](http://localhost:3000) for the live app shell
 - [http://localhost:3000/demo?role=admin](http://localhost:3000/demo?role=admin) for a local admin demo workspace
-- [http://localhost:3000/phone?role=admin&view=chat](http://localhost:3000/phone?role=admin&view=chat) for the single-phone preview
+- [http://localhost:3000/phone?role=admin&view=dashboard](http://localhost:3000/phone?role=admin&view=dashboard) for the single-phone preview
 
 ## One-Click Preview
 
@@ -108,7 +108,7 @@ If you want the preview inside VS Code instead of your normal browser:
 1. Open `Terminal` -> `Run Task...`
 2. Choose `Preview School Hub In Editor`
 
-That uses VS Code's built-in browser tab and opens `http://127.0.0.1:3000/phone?role=admin&view=chat` inside the editor.
+That uses VS Code's built-in browser tab and opens `http://127.0.0.1:3000/phone?role=admin&view=dashboard` inside the editor.
 
 If you are using a separate VS Code phone emulator extension, paste this URL into it:
 
@@ -122,8 +122,8 @@ On localhost, the sign-in card includes a `Create local admin test account` butt
 
 It creates and signs into:
 
-- email: `admin@schoolhub.local`
-- password: `SchoolHubAdmin123!`
+- email: `admin@classloop.local`
+- password: `ClassLoopAdmin123!`
 
 This helper is restricted to local development and is blocked in production.
 

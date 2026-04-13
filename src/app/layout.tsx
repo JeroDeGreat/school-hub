@@ -3,9 +3,9 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "School Hub",
+  title: "ClassLoop",
   description:
-    "A real-time collaboration platform for schools with chat, assignments, help requests, and announcements powered by Supabase.",
+    "A modern department-based school collaboration app with chat, assignments, help exchange, and realtime notifications powered by Supabase.",
 };
 
 export default function RootLayout({

@@ -1,9 +1,12 @@
 import Link from "next/link";
 
 const views = [
+  { id: "dashboard", label: "Home" },
+  { id: "spaces", label: "Spaces" },
   { id: "chat", label: "Chat" },
   { id: "assignments", label: "Assignments" },
   { id: "help", label: "Help" },
+  { id: "profile", label: "Profile" },
   { id: "notifications", label: "Alerts" },
 ] as const;
 
@@ -22,7 +25,7 @@ export default async function PhonePage({
 }) {
   const params = await searchParams;
   const role = roles.find((item) => item.id === params.role)?.id ?? "admin";
-  const view = views.find((item) => item.id === params.view)?.id ?? "chat";
+  const view = views.find((item) => item.id === params.view)?.id ?? "dashboard";
   const iframeUrl = `/demo?role=${role}&view=${view}`;
 
   return (
@@ -33,7 +36,7 @@ export default async function PhonePage({
             Phone preview
           </p>
           <h1 className="mt-3 text-4xl leading-[0.95] text-foreground">
-            A clean one-screen mobile preview for School Hub.
+            A clean one-screen mobile preview for ClassLoop.
           </h1>
           <p className="mt-4 text-sm leading-7 text-muted">
             This is the fastest way to inspect the app in a phone-sized frame.
@@ -98,7 +101,7 @@ export default async function PhonePage({
             <div className="mx-auto mb-3 h-6 w-28 rounded-full bg-black/70 dark:bg-white/75" />
             <iframe
               src={iframeUrl}
-              title="School Hub phone preview"
+              title="ClassLoop phone preview"
               className="mx-auto block h-[780px] w-full rounded-[2.5rem] border-0 bg-background"
             />
           </div>

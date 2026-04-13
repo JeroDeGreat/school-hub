@@ -4,10 +4,10 @@ import { assertServerSupabaseEnv } from "@/lib/supabase/config";
 import type { Database } from "@/lib/types/database";
 
 const testAdmin = {
-  email: "admin@schoolhub.local",
-  password: "SchoolHubAdmin123!",
-  handle: "schoolhubadmin",
-  fullName: "School Hub Admin",
+  email: "admin@classloop.local",
+  password: "ClassLoopAdmin123!",
+  handle: "classloopadmin",
+  fullName: "ClassLoop Admin",
   headline: "Local testing account",
 };
 

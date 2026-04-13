@@ -17,7 +17,7 @@ export function LandingShell({ mode }: { mode: "setup" | "guest" | "schema" }) {
   const isSetup = mode === "setup";
   const isSchema = mode === "schema";
   const isGuest = mode === "guest";
-  const primaryCtaHref = isGuest ? "/phone?role=admin&view=chat" : "/phone";
+  const primaryCtaHref = isGuest ? "/phone?role=admin&view=dashboard" : "/phone";
   const primaryCtaLabel = isGuest ? "Open phone demo" : "Open phone preview";
 
   return (
@@ -46,13 +46,13 @@ export function LandingShell({ mode }: { mode: "setup" | "guest" | "schema" }) {
               </p>
               <h1 className="max-w-3xl text-5xl leading-[0.95] text-foreground sm:text-6xl xl:text-7xl">
                 {isGuest
-                  ? "Login, create an account, or spin up a local admin in one calm step."
-                  : "Replace scattered chats with a calmer campus command center."}
+                  ? "Login, create an account, or test ClassLoop with a local admin in one calm step."
+                  : "Replace scattered WhatsApp groups with a student-first school command center."}
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-7 text-muted sm:text-lg">
                 {isGuest
-                  ? "School Hub brings departments, assignments, messages, and peer support into one workspace. Use the sign-in panel to enter the real app, or open the admin demo to test the experience immediately."
-                  : "School Hub merges department chat, assignments, announcements, peer help, and real-time notifications in one responsive space built with Next.js, Tailwind, and Supabase."}
+                  ? "ClassLoop brings departments, assignments, messages, and peer support into one workspace. Use the sign-in panel to enter the real app, or open the admin demo to test the experience immediately."
+                  : "ClassLoop merges department chat, assignments, announcements, peer help, and realtime notifications in one polished, mobile-first workspace built with Next.js, Tailwind, and Supabase."}
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">
@@ -66,7 +66,7 @@ export function LandingShell({ mode }: { mode: "setup" | "guest" | "schema" }) {
                   href="/demo?role=admin"
                   className="inline-flex items-center justify-center rounded-full border border-black/10 bg-white/75 px-5 py-3 text-sm font-semibold text-foreground transition hover:bg-white dark:border-white/10 dark:bg-white/8"
                 >
-                  Open admin demo workspace
+                  Open admin workspace
                 </Link>
               </div>
 
@@ -84,7 +84,7 @@ export function LandingShell({ mode }: { mode: "setup" | "guest" | "schema" }) {
                       <p className="text-sm font-semibold">Today&apos;s focus</p>
                       <p className="mt-1 text-sm leading-6 text-muted">
                         Announcements, call links, mentions, and department handoffs
-                        stay visible instead of disappearing inside group chats.
+                        stay visible instead of disappearing into random group chats.
                       </p>
                     </div>
                     <div className="grid grid-cols-3 gap-3 text-center">
@@ -103,7 +103,7 @@ export function LandingShell({ mode }: { mode: "setup" | "guest" | "schema" }) {
                       <div className="rounded-[1.2rem] bg-white/60 px-3 py-4 dark:bg-white/8">
                         <p className="text-3xl font-semibold">12</p>
                         <p className="mt-1 text-xs uppercase tracking-[0.22em] text-muted">
-                          Help matches
+                          Help loops
                         </p>
                       </div>
                     </div>
@@ -215,7 +215,7 @@ export function LandingShell({ mode }: { mode: "setup" | "guest" | "schema" }) {
                   Database setup pending
                 </p>
                 <h2 className="text-3xl text-foreground">
-                  Supabase auth is connected, but the School Hub schema is not
+                  Supabase auth is connected, but the ClassLoop schema is not
                   installed yet
                 </h2>
                 <p className="mt-3 text-sm leading-6 text-muted">

@@ -2,11 +2,11 @@
 
 import { motion } from "framer-motion";
 import { FileUp, Send } from "lucide-react";
-import { Avatar, AttachmentButton } from "@/components/workspace/workspace-ui";
+import { AttachmentButton, Avatar } from "@/components/workspace/workspace-ui";
 import type { MessageSummary, UserSummary } from "@/lib/types/app";
 import { cn, formatRelativeTime } from "@/lib/utils";
 
-const reactionOptions = ["👍", "❤", "🎯"];
+const reactionOptions = ["👍", "🔥", "🎯"];
 
 export function WorkspaceChat({
   currentUser,
@@ -53,13 +53,13 @@ export function WorkspaceChat({
           >
             <div className="flex items-start gap-3">
               <Avatar
-                name={message.author?.fullName ?? "School Hub Bot"}
+                name={message.author?.fullName ?? "ClassLoop Bot"}
                 url={message.author?.avatarUrl}
               />
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="font-semibold">
-                    {message.author?.fullName ?? "School Hub Bot"}
+                    {message.author?.fullName ?? "ClassLoop Bot"}
                   </p>
                   {message.author?.handle ? (
                     <span className="text-xs opacity-70">@{message.author.handle}</span>
